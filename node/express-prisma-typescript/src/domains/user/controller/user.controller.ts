@@ -45,3 +45,11 @@ userRouter.delete('/', async (req: Request, res: Response) => {
 
   return res.status(HttpStatus.OK)
 })
+
+userRouter.put('/switch-account-type', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  await service.switchAccountType(userId)
+
+  return res.status(HttpStatus.OK)
+})

@@ -3,6 +3,7 @@ import { OffsetPagination } from 'types'
 import { UserDTO } from '../dto'
 import { UserRepository } from '../repository'
 import { UserService } from './user.service'
+import { AccountType } from '@prisma/client'
 
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
@@ -20,5 +21,10 @@ export class UserServiceImpl implements UserService {
 
   async deleteUser (userId: any): Promise<void> {
     await this.repository.delete(userId)
+  }
+
+  async switchAccountType (userId: any): Promise<void> {
+    const accountType = AccountType.PRIVATE
+    await this.repository.switchAccountType(userId, accountType)
   }
 }
