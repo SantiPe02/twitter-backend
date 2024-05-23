@@ -10,4 +10,7 @@ export interface UserRepository {
   getById: (userId: string) => Promise<UserDTO | null>
   getByEmailOrUsername: (email?: string, username?: string) => Promise<ExtendedUserDTO | null>
   switchAccountType: (userId: string, accountType: AccountType) => Promise<void>
+  getAccountType: (userId: string) => Promise<AccountType>
+  getFollowers: (userId: string) => Promise<string[]>
+  getFollows: (userId: string) => Promise<string[]>
 }

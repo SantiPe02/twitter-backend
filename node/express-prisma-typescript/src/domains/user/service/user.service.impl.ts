@@ -24,7 +24,15 @@ export class UserServiceImpl implements UserService {
   }
 
   async switchAccountType (userId: any): Promise<void> {
-    const accountType = AccountType.PRIVATE
+    const accountType = await this.repository.getAccountType(userId) === AccountType.PUBLIC ? AccountType.PRIVATE : AccountType.PUBLIC
     await this.repository.switchAccountType(userId, accountType)
+  }
+
+  async getFollowers (userId: any): Promise<string[]> {
+    return await this.repository.getFollowers(userId)
+  }
+
+  async getFollows (userId: any): Promise<string[]> {
+    return await this.repository.getFollows(userId)
   }
 }

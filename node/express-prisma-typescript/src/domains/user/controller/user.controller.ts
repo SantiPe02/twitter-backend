@@ -53,3 +53,19 @@ userRouter.put('/switch-account-type', async (req: Request, res: Response) => {
 
   return res.status(HttpStatus.OK)
 })
+
+userRouter.get('/followers', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  const followers = await service.getFollowers(userId)
+
+  return res.status(HttpStatus.OK).json(followers)
+})
+
+userRouter.get('/follows', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  const follows = await service.getFollows(userId)
+
+  return res.status(HttpStatus.OK).json(follows)
+})

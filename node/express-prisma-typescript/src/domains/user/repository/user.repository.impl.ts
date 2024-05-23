@@ -69,4 +69,37 @@ export class UserRepositoryImpl implements UserRepository {
       }
     })
   }
+
+  async getAccountType (userId: any): Promise<AccountType> {
+    const user = await this.db.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+    return user?.accountType ?? AccountType.PUBLIC
+  }
+
+  async getFollowers (userId: any): Promise<string[]> {
+    const user = await this.db.user.findUnique({
+      where: {
+        id: userId
+      },
+      include: {
+        followers: true
+      }
+    })
+    return user?.followers.map((follower) => follower.followerId) ?? []
+  }
+
+  async getFollows (userId: any): Promise<string[]> {
+    const user = await this.db.user.findUnique({
+      where: {
+        id: userId
+      },
+      include: {
+        follows: true
+      }
+    })
+    return user?.follows.map((follow) => follow.followedId) ?? []
+  }
 }
