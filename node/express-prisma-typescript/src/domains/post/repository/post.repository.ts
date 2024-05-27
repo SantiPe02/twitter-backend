@@ -7,4 +7,8 @@ export interface PostRepository {
   delete: (postId: string) => Promise<void>
   getById: (postId: string) => Promise<PostDTO | null>
   getByAuthorId: (authorId: string) => Promise<PostDTO[]>
+  getAuthorAccountTypeByPostId: (postId: string) => Promise<string>
+  getAuthorAccountTypeByAuthorId: (authorId: string) => Promise<string>
+  getAuthorFollowersByPostId: (postId: string) => Promise<string[]>
+  getAuthorFollowersByAuthorId: (authorId: string) => Promise<string[]>
 }

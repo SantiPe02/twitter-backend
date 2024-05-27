@@ -3,6 +3,7 @@ import { FollowerService, FollowerServiceImpl } from '../service'
 import { FollowerRepositoryImpl } from '../repository'
 import { db } from '@utils'
 import HttpStatus from 'http-status'
+import 'express-async-errors'
 
 export const followRouter = Router()
 

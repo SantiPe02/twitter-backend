@@ -21,19 +21,35 @@ export class PostServiceImpl implements PostService {
   }
 
   async getPost (userId: string, postId: string): Promise<PostDTO> {
-    // TODO: validate that the author has public profile or the user follows the author
+    const authorAccountType = await this.repository.getAuthorAccountTypeByPostId(postId)
+    if (authorAccountType === 'PRIVATE') {
+      const authorFollowers = await this.repository.getAuthorFollowersByPostId(postId)
+      if (!authorFollowers.includes(userId)) throw new NotFoundException()
+    }
     const post = await this.repository.getById(postId)
     if (!post) throw new NotFoundException('post')
     return post
   }
 
   async getLatestPosts (userId: string, options: CursorPagination): Promise<PostDTO[]> {
-    // TODO: filter post search to return posts from authors that the user follows
-    return await this.repository.getAllByDatePaginated(options)
+    const allPosts = await this.repository.getAllByDatePaginated(options)
+    const postsWithAuthorData = await Promise.all(allPosts.map(async post => {
+      const authorAccountType = await this.repository.getAuthorAccountTypeByPostId(post.id)
+      if (authorAccountType === 'PRIVATE') {
+        const authorFollowers = await this.repository.getAuthorFollowersByPostId(post.id)
+        return authorFollowers.includes(userId) ? post : null
+      }
+      return post
+    }))
+    return postsWithAuthorData.filter((post): post is PostDTO => post !== null)
   }
 
   async getPostsByAuthor (userId: any, authorId: string): Promise<PostDTO[]> {
-    // TODO: throw exception when the author has a private profile and the user doesn't follow them
+    const authorAccountType = await this.repository.getAuthorAccountTypeByAuthorId(authorId)
+    if (authorAccountType === 'PRIVATE') {
+      const authorFollowers = await this.repository.getAuthorFollowersByAuthorId(authorId)
+      if (!authorFollowers.includes(userId)) throw new NotFoundException()
+    }
     return await this.repository.getByAuthorId(authorId)
   }
 }
