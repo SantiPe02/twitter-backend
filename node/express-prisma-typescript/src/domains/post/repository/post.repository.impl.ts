@@ -60,4 +60,68 @@ export class PostRepositoryImpl implements PostRepository {
     })
     return posts.map(post => new PostDTO(post))
   }
+
+  async getAuthorAccountTypeByPostId (postId: string): Promise<string> {
+    const post = await this.db.post.findUnique({
+      where: {
+        id: postId
+      },
+      include: {
+        author: {
+          select: {
+            accountType: true
+          }
+        }
+      }
+    })
+    return post?.author.accountType as string
+  }
+
+  async getAuthorAccountTypeByAuthorId (authorId: string): Promise<string> {
+    const post = await this.db.post.findFirst({
+      where: {
+        authorId
+      },
+      include: {
+        author: {
+          select: {
+            accountType: true
+          }
+        }
+      }
+    })
+    return post?.author.accountType as string
+  }
+
+  async getAuthorFollowersByPostId (postId: string): Promise<string[]> {
+    const post = await this.db.post.findUnique({
+      where: {
+        id: postId
+      },
+      include: {
+        author: {
+          include: {
+            followers: true
+          }
+        }
+      }
+    })
+    return post?.author.followers.map(follower => follower.followerId) ?? []
+  }
+
+  async getAuthorFollowersByAuthorId (authorId: string): Promise<string[]> {
+    const post = await this.db.post.findFirst({
+      where: {
+        authorId
+      },
+      include: {
+        author: {
+          include: {
+            followers: true
+          }
+        }
+      }
+    })
+    return post?.author.followers.map(follower => follower.followerId) ?? []
+  }
 }

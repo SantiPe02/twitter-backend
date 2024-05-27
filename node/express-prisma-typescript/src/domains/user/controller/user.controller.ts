@@ -30,6 +30,22 @@ userRouter.get('/me', async (req: Request, res: Response) => {
   return res.status(HttpStatus.OK).json(user)
 })
 
+userRouter.get('/followers', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  const followers = await service.getFollowers(userId)
+
+  return res.status(HttpStatus.OK).json(followers)
+})
+
+userRouter.get('/follows', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  const follows = await service.getFollows(userId)
+
+  return res.status(HttpStatus.OK).json(follows)
+})
+
 userRouter.get('/:userId', async (req: Request, res: Response) => {
   const { userId: otherUserId } = req.params
 
@@ -52,20 +68,4 @@ userRouter.put('/switch-account-type', async (req: Request, res: Response) => {
   await service.switchAccountType(userId)
 
   return res.status(HttpStatus.OK)
-})
-
-userRouter.get('/followers', async (req: Request, res: Response) => {
-  const { userId } = res.locals.context
-
-  const followers = await service.getFollowers(userId)
-
-  return res.status(HttpStatus.OK).json(followers)
-})
-
-userRouter.get('/follows', async (req: Request, res: Response) => {
-  const { userId } = res.locals.context
-
-  const follows = await service.getFollows(userId)
-
-  return res.status(HttpStatus.OK).json(follows)
 })
