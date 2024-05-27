@@ -12,8 +12,24 @@ export function BodyValidation<T> (target: ClassType<T>) {
       forbidNonWhitelisted: true
     })
 
-    if (errors.length > 0) { throw new ValidationException(errors.map(error => ({ ...error, target: undefined, value: undefined }))) }
+    if (errors.length > 0) {
+      throw new ValidationException(errors.map((error) => ({ ...error, target: undefined, value: undefined })))
+    }
 
     next()
   }
+}
+
+export const validateReactionBody = (req: Request, res: Response, next: NextFunction): void => {
+  const reactionType: string | undefined = req.body.reactionType
+
+  if (!reactionType) {
+    throw new ValidationException([{ property: 'reactionType', constraints: { isDefined: 'reactionType should be defined' } }])
+  }
+
+  if (reactionType !== 'LIKE' && reactionType !== 'RETWEET') {
+    throw new ValidationException([{ property: 'reactionType', constraints: { isDefined: 'reactionType should be either LIKE or RETWEET' } }])
+  }
+
+  next()
 }
