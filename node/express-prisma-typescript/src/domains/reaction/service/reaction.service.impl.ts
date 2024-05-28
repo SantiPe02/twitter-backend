@@ -2,7 +2,7 @@ import { ReactionType } from '@prisma/client'
 import { ReactionRepository } from '../repository'
 import { ReactionService } from './reaction.service'
 import { ReactionInputDTO } from '../dto'
-import { ConflictException, NotFoundException } from '@utils'
+import { ConflictException, NotFoundException, validateUuid } from '@utils'
 
 export class ReactionServiceImpl implements ReactionService {
   constructor (private readonly reactionRepository: ReactionRepository) {}
@@ -25,9 +25,11 @@ export class ReactionServiceImpl implements ReactionService {
   }
 
   private async validateReaction (userId: string, postId: string, reactionType: string): Promise<void> {
+    validateUuid(postId)
+
     const postAuthorAccountType = await this.reactionRepository.getPostAuthorAccountType(postId)
 
-    if (postAuthorAccountType === null) throw new NotFoundException('Post')
+    if (postAuthorAccountType === null) throw new NotFoundException('post')
 
     if (postAuthorAccountType === 'PRIVATE') {
       const followers = await this.reactionRepository.getAuthorFollowers(postId)
