@@ -2,7 +2,7 @@ import { CreatePostInputDTO, PostDTO } from '../dto'
 import { PostRepository } from '../repository'
 import { PostService } from '.'
 import { validate } from 'class-validator'
-import { ForbiddenException, NotFoundException } from '@utils'
+import { ForbiddenException, NotFoundException, validateUuid } from '@utils'
 import { CursorPagination } from '@types'
 
 export class PostServiceImpl implements PostService {
@@ -21,6 +21,7 @@ export class PostServiceImpl implements PostService {
   }
 
   async getPost (userId: string, postId: string): Promise<PostDTO> {
+    validateUuid(postId)
     const authorAccountType = await this.repository.getAuthorAccountTypeByPostId(postId)
     if (authorAccountType === 'PRIVATE') {
       const authorFollowers = await this.repository.getAuthorFollowersByPostId(postId)
@@ -45,6 +46,7 @@ export class PostServiceImpl implements PostService {
   }
 
   async getPostsByAuthor (userId: any, authorId: string): Promise<PostDTO[]> {
+    validateUuid(authorId)
     const authorAccountType = await this.repository.getAuthorAccountTypeByAuthorId(authorId)
     if (authorAccountType === 'PRIVATE') {
       const authorFollowers = await this.repository.getAuthorFollowersByAuthorId(authorId)
