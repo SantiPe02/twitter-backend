@@ -6,4 +6,6 @@ export interface ReactionRepository {
   getReaction: (reactionInput: ReactionInputDTO) => Promise<ReactionDTO | null>
   getPostAuthorAccountType: (postId: string) => Promise<string | null>
   getAuthorFollowers: (postId: string) => Promise<string[]>
+  getLikesByUserId: (userId: string) => Promise<ReactionDTO[]>
+  getRetweetsByUserId: (userId: string) => Promise<ReactionDTO[]>
 }

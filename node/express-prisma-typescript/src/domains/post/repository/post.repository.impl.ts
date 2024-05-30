@@ -20,6 +20,9 @@ export class PostRepositoryImpl implements PostRepository {
 
   async getAllByDatePaginated (options: CursorPagination): Promise<PostDTO[]> {
     const posts = await this.db.post.findMany({
+      where: {
+        commentPostReference: null
+      },
       cursor: options.after ? { id: options.after } : (options.before) ? { id: options.before } : undefined,
       skip: options.after ?? options.before ? 1 : undefined,
       take: options.limit ? (options.before ? -options.limit : options.limit) : undefined,
@@ -123,5 +126,28 @@ export class PostRepositoryImpl implements PostRepository {
       }
     })
     return post?.author.followers.map(follower => follower.followerId) ?? []
+  }
+
+  async comment (userId: string, data: CreatePostInputDTO, postId: string): Promise<PostDTO> {
+    const post = await this.db.post.create({
+      data: {
+        authorId: userId,
+        commentPostReference: postId,
+        ...data
+      }
+    })
+    return new PostDTO(post)
+  }
+
+  async getCommentsByUserId (userId: string): Promise<PostDTO[]> {
+    const posts = await this.db.post.findMany({
+      where: {
+        authorId: userId,
+        commentPostReference: {
+          not: null
+        }
+      }
+    })
+    return posts.map(post => new PostDTO(post))
   }
 }
