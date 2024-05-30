@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, ReactionType } from '@prisma/client'
 import { ReactionRepository } from './reaction.repository'
 import { ReactionDTO, ReactionInputDTO } from '../dto'
 
@@ -66,5 +66,23 @@ export class ReactionRepositoryImpl implements ReactionRepository {
       }
     })
     return post?.author.followers.map(follower => follower.followerId) ?? []
+  }
+
+  async getLikesByUserId (userId: string): Promise<ReactionDTO[]> {
+    return await this.db.reaction.findMany({
+      where: {
+        userId,
+        reactionType: ReactionType.LIKE
+      }
+    }).then(reactions => reactions.map(reaction => new ReactionDTO(reaction)))
+  }
+
+  async getRetweetsByUserId (userId: string): Promise<ReactionDTO[]> {
+    return await this.db.reaction.findMany({
+      where: {
+        userId,
+        reactionType: ReactionType.RETWEET
+      }
+    }).then(reactions => reactions.map(reaction => new ReactionDTO(reaction)))
   }
 }

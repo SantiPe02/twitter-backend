@@ -54,4 +54,17 @@ export class PostServiceImpl implements PostService {
     }
     return await this.repository.getByAuthorId(authorId)
   }
+
+  async commentPost (userId: string, data: CreatePostInputDTO, postId: string): Promise<PostDTO> {
+    await validate(data)
+    validateUuid(postId)
+    const post = await this.repository.getById(postId)
+    if (!post) throw new NotFoundException('post')
+    return await this.repository.comment(userId, data, postId)
+  }
+
+  async getCommentsByUserId (userId: string): Promise<PostDTO[]> {
+    validateUuid(userId)
+    return await this.repository.getCommentsByUserId(userId)
+  }
 }

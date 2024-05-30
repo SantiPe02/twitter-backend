@@ -11,4 +11,6 @@ export interface PostRepository {
   getAuthorAccountTypeByAuthorId: (authorId: string) => Promise<string>
   getAuthorFollowersByPostId: (postId: string) => Promise<string[]>
   getAuthorFollowersByAuthorId: (authorId: string) => Promise<string[]>
+  comment: (userId: string, data: CreatePostInputDTO, postId: string) => Promise<PostDTO>
+  getCommentsByUserId: (userId: string) => Promise<PostDTO[]>
 }

@@ -36,4 +36,14 @@ export class ReactionServiceImpl implements ReactionService {
       if (!followers.includes(userId)) throw new NotFoundException()
     }
   }
+
+  async getLikesByUserId (userId: string): Promise<ReactionInputDTO[]> {
+    validateUuid(userId)
+    return await this.reactionRepository.getLikesByUserId(userId)
+  }
+
+  async getRetweetsByUserId (userId: string): Promise<ReactionInputDTO[]> {
+    validateUuid(userId)
+    return await this.reactionRepository.getRetweetsByUserId(userId)
+  }
 }
