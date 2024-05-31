@@ -102,4 +102,15 @@ export class UserRepositoryImpl implements UserRepository {
     })
     return user?.follows.map((follow) => follow.followedId) ?? []
   }
+
+  async uploadProfilePicture (userId: any, url: any): Promise<void> {
+    await this.db.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        profilePicture: url
+      }
+    })
+  }
 }

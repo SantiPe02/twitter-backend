@@ -69,3 +69,11 @@ userRouter.put('/switch-account-type', async (req: Request, res: Response) => {
 
   return res.status(HttpStatus.OK)
 })
+
+userRouter.post('/upload-profile-picture', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  const url = await service.uploadProfilePicture(userId)
+
+  return res.status(HttpStatus.OK).send(url)
+})

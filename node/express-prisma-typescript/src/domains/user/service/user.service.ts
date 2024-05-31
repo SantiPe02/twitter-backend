@@ -8,4 +8,5 @@ export interface UserService {
   switchAccountType: (userId: any) => Promise<void>
   getFollowers: (userId: any) => Promise<string[]>
   getFollows: (userId: any) => Promise<string[]>
+  uploadProfilePicture: (userId: any) => Promise<string>
 }
