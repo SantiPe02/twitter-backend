@@ -4,6 +4,7 @@ import { CursorPagination } from '@types'
 
 import { PostRepository } from '.'
 import { CreatePostInputDTO, PostDTO } from '../dto'
+import { UserViewDTO } from '@domains/user/dto'
 
 export class PostRepositoryImpl implements PostRepository {
   constructor (private readonly db: PrismaClient) {}
@@ -149,5 +150,44 @@ export class PostRepositoryImpl implements PostRepository {
       }
     })
     return posts.map(post => new PostDTO(post))
+  }
+
+  async getCommentsByPostId (postId: string, options: CursorPagination): Promise<PostDTO[]> {
+    const posts = await this.db.post.findMany({
+      where: {
+        commentPostReference: postId
+      },
+      cursor: options.after ? { id: options.after } : (options.before) ? { id: options.before } : undefined,
+      skip: options.after ?? options.before ? 1 : undefined,
+      take: options.limit ? (options.before ? -options.limit : options.limit) : undefined,
+      orderBy: [
+        {
+          createdAt: 'desc'
+        },
+        {
+          id: 'asc'
+        }
+      ]
+    })
+    return posts.map(post => new PostDTO(post))
+  }
+
+  async getAuthorByPostId (postId: string): Promise<UserViewDTO | null> {
+    const post = await this.db.post.findUnique({
+      where: {
+        id: postId
+      },
+      include: {
+        author: true
+      }
+    })
+    if (!post) return null
+    const data = {
+      id: post.authorId,
+      name: post.author.name,
+      username: post.author.username,
+      profilePicture: post.author.profilePicture
+    }
+    return new UserViewDTO(data)
   }
 }

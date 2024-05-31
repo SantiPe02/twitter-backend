@@ -85,4 +85,22 @@ export class ReactionRepositoryImpl implements ReactionRepository {
       }
     }).then(reactions => reactions.map(reaction => new ReactionDTO(reaction)))
   }
+
+  async getQtyOfLikes (postId: string): Promise<number> {
+    return await this.db.reaction.count({
+      where: {
+        postId,
+        reactionType: ReactionType.LIKE
+      }
+    })
+  }
+
+  async getQtyOfRetweets (postId: string): Promise<number> {
+    return await this.db.reaction.count({
+      where: {
+        postId,
+        reactionType: ReactionType.RETWEET
+      }
+    })
+  }
 }
