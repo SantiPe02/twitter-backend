@@ -4,6 +4,7 @@ import { UserDTO } from '../dto'
 import { UserRepository } from '../repository'
 import { UserService } from './user.service'
 import { AccountType } from '@prisma/client'
+import { getPresignedUrl } from '@utils'
 
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
@@ -34,5 +35,11 @@ export class UserServiceImpl implements UserService {
 
   async getFollows (userId: any): Promise<string[]> {
     return await this.repository.getFollows(userId)
+  }
+
+  async uploadProfilePicture (userId: any): Promise<string> {
+    const url = await getPresignedUrl(`profile-picture-user-${userId as string}`)
+    await this.repository.uploadProfilePicture(userId, url)
+    return url
   }
 }
