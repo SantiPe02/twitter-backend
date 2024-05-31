@@ -46,4 +46,16 @@ export class ReactionServiceImpl implements ReactionService {
     validateUuid(userId)
     return await this.reactionRepository.getRetweetsByUserId(userId)
   }
+
+  async getQtyOfLikes (postId: string): Promise<number> {
+    validateUuid(postId)
+    const qty = await this.reactionRepository.getQtyOfLikes(postId)
+    return qty
+  }
+
+  async getQtyOfRetweets (postId: string): Promise<number> {
+    validateUuid(postId)
+    const qty = await this.reactionRepository.getQtyOfRetweets(postId)
+    return qty
+  }
 }

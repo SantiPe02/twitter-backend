@@ -28,10 +28,19 @@ commentRouter.delete('/:postId', async (req, res) => {
   res.status(HttpStatus.OK).send(`Deleted comment ${postId}`)
 })
 
-commentRouter.get('/:userId', async (req, res) => {
+commentRouter.get('/user/:userId', async (req, res) => {
   const { userId } = req.params
 
   const posts = await service.getCommentsByUserId(userId)
 
   res.status(HttpStatus.OK).json(posts)
+})
+
+commentRouter.get('/:postId', async (req, res) => {
+  const { postId } = req.params
+  const { limit, before, after } = req.query as Record<string, string>
+
+  const comments = await service.getCommentsByPostId(postId, { limit: Number(limit), before, after })
+
+  res.status(HttpStatus.OK).json(comments)
 })
