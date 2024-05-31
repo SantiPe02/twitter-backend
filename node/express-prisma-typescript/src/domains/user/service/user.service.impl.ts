@@ -1,6 +1,6 @@
 import { NotFoundException } from '@utils/errors'
 import { OffsetPagination } from 'types'
-import { UserDTO } from '../dto'
+import { UserDTO, UserViewDTO } from '../dto'
 import { UserRepository } from '../repository'
 import { UserService } from './user.service'
 import { AccountType } from '@prisma/client'
@@ -8,7 +8,7 @@ import { AccountType } from '@prisma/client'
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
 
-  async getUser (userId: any): Promise<UserDTO> {
+  async getUser (userId: any): Promise<UserViewDTO> {
     const user = await this.repository.getById(userId)
     if (!user) throw new NotFoundException('user')
     return user
