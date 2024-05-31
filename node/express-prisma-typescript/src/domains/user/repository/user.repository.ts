@@ -13,4 +13,5 @@ export interface UserRepository {
   getAccountType: (userId: string) => Promise<AccountType>
   getFollowers: (userId: string) => Promise<string[]>
   getFollows: (userId: string) => Promise<string[]>
+  uploadProfilePicture: (userId: string, url: any) => Promise<void>
 }

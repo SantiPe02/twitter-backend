@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.583.0",
+    "@aws-sdk/s3-request-presigner": "^3.583.0",
     "@prisma/client": "^4.9.0",
     "@types/uuid-validate": "^0.0.3",
     "bcrypt": "^5.1.0",
