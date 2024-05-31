@@ -1,6 +1,6 @@
 import { NotFoundException } from '@utils/errors'
 import { OffsetPagination } from 'types'
-import { UserDTO, UserViewDTO } from '../dto'
+import { UserViewDTO } from '../dto'
 import { UserRepository } from '../repository'
 import { UserService } from './user.service'
 import { AccountType } from '@prisma/client'
@@ -15,7 +15,7 @@ export class UserServiceImpl implements UserService {
     return user
   }
 
-  async getUserRecommendations (userId: any, options: OffsetPagination): Promise<UserDTO[]> {
+  async getUserRecommendations (userId: any, options: OffsetPagination): Promise<UserViewDTO[]> {
     // TODO: make this return only users followed by users the original user follows
     return await this.repository.getRecommendedUsersPaginated(options)
   }

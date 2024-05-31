@@ -19,7 +19,7 @@ export class UserRepositoryImpl implements UserRepository {
         id: userId
       }
     })
-    return user ? new UserViewDTO({ id: user.id, name: user.name, username: user.username, profilePicture: user.profilePicture }) : null
+    return user ? new UserViewDTO(user) : null
   }
 
   async delete (userId: any): Promise<void> {
@@ -30,7 +30,7 @@ export class UserRepositoryImpl implements UserRepository {
     })
   }
 
-  async getRecommendedUsersPaginated (options: OffsetPagination): Promise<UserDTO[]> {
+  async getRecommendedUsersPaginated (options: OffsetPagination): Promise<UserViewDTO[]> {
     const users = await this.db.user.findMany({
       take: options.limit ? options.limit : undefined,
       skip: options.skip ? options.skip : undefined,
@@ -40,7 +40,7 @@ export class UserRepositoryImpl implements UserRepository {
         }
       ]
     })
-    return users.map(user => new UserDTO(user))
+    return users.map(user => new UserViewDTO(user))
   }
 
   async getByEmailOrUsername (email?: string, username?: string): Promise<ExtendedUserDTO | null> {
