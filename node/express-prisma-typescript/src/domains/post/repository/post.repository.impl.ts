@@ -190,4 +190,12 @@ export class PostRepositoryImpl implements PostRepository {
     }
     return new UserViewDTO(data)
   }
+
+  async getQtyOfComments (postId: string): Promise<number> {
+    return await this.db.post.count({
+      where: {
+        commentPostReference: postId
+      }
+    })
+  }
 }

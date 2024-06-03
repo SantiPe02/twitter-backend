@@ -16,4 +16,5 @@ export interface PostRepository {
   getCommentsByUserId: (userId: string) => Promise<PostDTO[]>
   getCommentsByPostId: (postId: string, options: CursorPagination) => Promise<PostDTO[]>
   getAuthorByPostId: (postId: string) => Promise<UserViewDTO | null>
+  getQtyOfComments: (postId: string) => Promise<number>
 }
