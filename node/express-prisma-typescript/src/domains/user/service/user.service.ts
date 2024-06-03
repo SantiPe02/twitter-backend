@@ -9,4 +9,5 @@ export interface UserService {
   getFollowers: (userId: any) => Promise<string[]>
   getFollows: (userId: any) => Promise<string[]>
   uploadProfilePicture: (userId: any) => Promise<string>
+  getUsersFilteredByUsername: (username: string, options: OffsetPagination) => Promise<UserViewDTO[]>
 }

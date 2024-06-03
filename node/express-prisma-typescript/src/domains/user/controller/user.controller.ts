@@ -77,3 +77,12 @@ userRouter.post('/upload-profile-picture', async (req: Request, res: Response) =
 
   return res.status(HttpStatus.OK).send(url)
 })
+
+userRouter.get('/by_username/:username', async (req: Request, res: Response) => {
+  const { username } = req.params
+  const { limit, skip } = req.query as Record<string, string>
+
+  const users = await service.getUsersFilteredByUsername(username, { limit: Number(limit), skip: Number(skip) })
+
+  return res.status(HttpStatus.OK).json(users)
+})

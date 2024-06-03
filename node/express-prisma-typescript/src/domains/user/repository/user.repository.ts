@@ -14,4 +14,5 @@ export interface UserRepository {
   getFollowers: (userId: string) => Promise<string[]>
   getFollows: (userId: string) => Promise<string[]>
   uploadProfilePicture: (userId: string, url: any) => Promise<void>
+  getUsersFilteredByUsername: (username: string, options: OffsetPagination) => Promise<UserViewDTO[]>
 }

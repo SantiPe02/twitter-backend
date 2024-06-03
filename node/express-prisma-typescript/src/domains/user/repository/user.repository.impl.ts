@@ -113,4 +113,22 @@ export class UserRepositoryImpl implements UserRepository {
       }
     })
   }
+
+  async getUsersFilteredByUsername (username: string, options: OffsetPagination): Promise<UserViewDTO[]> {
+    const users = await this.db.user.findMany({
+      where: {
+        username: {
+          contains: username
+        }
+      },
+      take: options.limit ? options.limit : undefined,
+      skip: options.skip ? options.skip : undefined,
+      orderBy: [
+        {
+          id: 'asc'
+        }
+      ]
+    })
+    return users.map(user => new UserViewDTO(user))
+  }
 }
