@@ -4,12 +4,13 @@ import { UserViewDTO } from '../dto'
 import { UserRepository } from '../repository'
 import { UserService } from './user.service'
 import { AccountType } from '@prisma/client'
-import { getPresignedUrl } from '@utils'
+import { getPresignedUrl, validateUuid } from '@utils'
 
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
 
   async getUser (userId: any, myId?: any): Promise<UserViewDTO | null> {
+    validateUuid(userId)
     const user = await this.repository.getById(userId)
     if (!user) throw new NotFoundException('user')
     if (userId === myId) return user
