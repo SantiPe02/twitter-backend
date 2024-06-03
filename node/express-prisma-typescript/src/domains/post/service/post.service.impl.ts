@@ -36,7 +36,7 @@ export class PostServiceImpl implements PostService {
     return post
   }
 
-  async getLatestPosts (userId: string, options: CursorPagination): Promise<PostDTO[]> {
+  async getLatestPosts (userId: string, options: CursorPagination): Promise<ExtendedPostDTO[]> {
     const allPosts = await this.repository.getAllByDatePaginated(options)
     const postsWithAuthorData = await Promise.all(allPosts.map(async post => {
       const authorAccountType = await this.repository.getAuthorAccountTypeByPostId(post.id)
@@ -46,17 +46,27 @@ export class PostServiceImpl implements PostService {
       }
       return post
     }))
-    return postsWithAuthorData.filter((post): post is PostDTO => post !== null)
+
+    const extendedPosts = await Promise.all(
+      postsWithAuthorData.filter(post => post !== null).map(
+        async post => await this.getExtendedPost(post as PostDTO)
+      ))
+    return extendedPosts
   }
 
-  async getPostsByAuthor (userId: any, authorId: string): Promise<PostDTO[]> {
+  async getPostsByAuthor (userId: any, authorId: string): Promise<ExtendedPostDTO[]> {
     validateUuid(authorId)
     const authorAccountType = await this.repository.getAuthorAccountTypeByAuthorId(authorId)
     if (authorAccountType === 'PRIVATE') {
       const authorFollowers = await this.repository.getAuthorFollowersByAuthorId(authorId)
       if (!authorFollowers.includes(userId)) throw new NotFoundException()
     }
-    return await this.repository.getByAuthorId(authorId)
+    const posts = await this.repository.getByAuthorId(authorId)
+    const postsWithReactionsData = await Promise.all(
+      posts.map(
+        async post => await this.getExtendedPost(post)
+      ))
+    return postsWithReactionsData
   }
 
   async commentPost (userId: string, data: CreatePostInputDTO, postId: string): Promise<PostDTO> {
@@ -75,18 +85,23 @@ export class PostServiceImpl implements PostService {
   async getCommentsByPostId (postId: string, options: CursorPagination): Promise<ExtendedPostDTO[]> {
     validateUuid(postId)
     const comments = await this.repository.getCommentsByPostId(postId, options)
-    const qtyComments = comments.length
 
-    const commentsWithReactionsData = await Promise.all(comments.map(async comment => {
-      const likes = await this.reactionService.getQtyOfLikes(comment.id)
-      const retweets = await this.reactionService.getQtyOfRetweets(comment.id)
-      const author = await this.repository.getAuthorByPostId(comment.id)
+    const commentsWithReactionsData = await Promise.all(
+      comments.map(
+        async comment => await this.getExtendedPost(comment)
+      ))
 
-      if (!author) throw new NotFoundException('author')
-
-      return new ExtendedPostDTO({ ...comment, author, qtyComments, qtyLikes: likes, qtyRetweets: retweets })
-    }
-    ))
     return commentsWithReactionsData.sort((a, b) => a.qtyLikes + a.qtyRetweets - b.qtyLikes - b.qtyRetweets).reverse()
+  }
+
+  private async getExtendedPost (post: PostDTO): Promise<ExtendedPostDTO> {
+    const likes = await this.reactionService.getQtyOfLikes(post.id)
+    const retweets = await this.reactionService.getQtyOfRetweets(post.id)
+    const author = await this.repository.getAuthorByPostId(post.id)
+    const comments = await this.repository.getQtyOfComments(post.id)
+
+    if (!author) throw new NotFoundException('author')
+
+    return new ExtendedPostDTO({ ...post, author, qtyComments: comments, qtyLikes: likes, qtyRetweets: retweets })
   }
 }
