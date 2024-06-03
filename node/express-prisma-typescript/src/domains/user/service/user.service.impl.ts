@@ -42,4 +42,8 @@ export class UserServiceImpl implements UserService {
     await this.repository.uploadProfilePicture(userId, url)
     return url
   }
+
+  async getUsersFilteredByUsername (username: string, options: OffsetPagination): Promise<UserViewDTO[]> {
+    return await this.repository.getUsersFilteredByUsername(username, options)
+  }
 }
