@@ -11,8 +11,8 @@ export interface UserRepository {
   getByEmailOrUsername: (email?: string, username?: string) => Promise<ExtendedUserDTO | null>
   switchAccountType: (userId: string, accountType: AccountType) => Promise<void>
   getAccountType: (userId: string) => Promise<AccountType>
-  getFollowers: (userId: string) => Promise<string[]>
-  getFollows: (userId: string) => Promise<string[]>
+  getFollowers: (userId: string) => Promise<UserViewDTO[]>
+  getFollows: (userId: string) => Promise<UserViewDTO[]>
   uploadProfilePicture: (userId: string, url: any) => Promise<void>
   getUsersFilteredByUsername: (username: string, options: OffsetPagination) => Promise<UserViewDTO[]>
 }

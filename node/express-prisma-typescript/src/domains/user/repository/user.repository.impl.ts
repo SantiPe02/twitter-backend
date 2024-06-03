@@ -79,28 +79,36 @@ export class UserRepositoryImpl implements UserRepository {
     return user?.accountType ?? AccountType.PUBLIC
   }
 
-  async getFollowers (userId: any): Promise<string[]> {
+  async getFollowers (userId: any): Promise<UserViewDTO[]> {
     const user = await this.db.user.findUnique({
       where: {
         id: userId
       },
       include: {
-        followers: true
+        followers: {
+          include: {
+            follower: true
+          }
+        }
       }
     })
-    return user?.followers.map((follower) => follower.followerId) ?? []
+    return user?.followers.map((follower) => new UserViewDTO(follower.follower)) ?? []
   }
 
-  async getFollows (userId: any): Promise<string[]> {
+  async getFollows (userId: any): Promise<UserViewDTO[]> {
     const user = await this.db.user.findUnique({
       where: {
         id: userId
       },
       include: {
-        follows: true
+        follows: {
+          include: {
+            followed: true
+          }
+        }
       }
     })
-    return user?.follows.map((follow) => follow.followedId) ?? []
+    return user?.follows.map((follow) => new UserViewDTO(follow.followed)) ?? []
   }
 
   async uploadProfilePicture (userId: any, url: any): Promise<void> {

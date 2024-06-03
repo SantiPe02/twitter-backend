@@ -9,10 +9,17 @@ import { getPresignedUrl } from '@utils'
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
 
-  async getUser (userId: any): Promise<UserViewDTO> {
+  async getUser (userId: any, myId?: any): Promise<UserViewDTO | null> {
     const user = await this.repository.getById(userId)
     if (!user) throw new NotFoundException('user')
-    return user
+    if (userId === myId) return user
+    if (myId === undefined) return user
+
+    const accountType = await this.repository.getAccountType(userId)
+    if (accountType === AccountType.PUBLIC) return user
+    const followers = await this.repository.getFollowers(userId)
+    if (followers.some(follower => follower.id === myId)) return user
+    return null
   }
 
   async getUserRecommendations (userId: any, options: OffsetPagination): Promise<UserViewDTO[]> {
@@ -29,11 +36,11 @@ export class UserServiceImpl implements UserService {
     await this.repository.switchAccountType(userId, accountType)
   }
 
-  async getFollowers (userId: any): Promise<string[]> {
+  async getFollowers (userId: any): Promise<UserViewDTO[]> {
     return await this.repository.getFollowers(userId)
   }
 
-  async getFollows (userId: any): Promise<string[]> {
+  async getFollows (userId: any): Promise<UserViewDTO[]> {
     return await this.repository.getFollows(userId)
   }
 
