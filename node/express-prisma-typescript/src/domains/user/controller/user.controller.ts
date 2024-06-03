@@ -47,9 +47,10 @@ userRouter.get('/follows', async (req: Request, res: Response) => {
 })
 
 userRouter.get('/:userId', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
   const { userId: otherUserId } = req.params
 
-  const user = await service.getUser(otherUserId)
+  const user = await service.getUser(otherUserId, userId)
 
   return res.status(HttpStatus.OK).json(user)
 })
