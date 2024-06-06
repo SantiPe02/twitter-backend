@@ -41,7 +41,6 @@ export const validateReactionBody = (req: Request, res: Response, next: NextFunc
 
 export const validateUuid = (uuid: string): void => {
   if (!uuidValidate(uuid)) {
-    console.log('entra aca')
     throw new ValidationException([{ property: 'uuid', constraints: { isDefined: 'uuid should be a valid uuid' } }])
   }
 }

@@ -6,8 +6,8 @@ import cors from 'cors'
 import { Constants, NodeEnv, Logger } from '@utils'
 import { router } from '@router'
 import { ErrorHandling } from '@utils/errors'
-import { Server } from 'socket.io'
-import http from 'http'
+import { createServer } from 'http'
+import { SocketService } from '@domains/chat'
 
 const app = express()
 
@@ -36,22 +36,11 @@ app.listen(Constants.PORT, () => {
   Logger.info(`Server listening on port ${Constants.PORT}`)
 })
 
-const io = new Server()
+const socketServer = createServer(app)
 
-io.on('connection', (socket) => {
-  console.log('A user connected')
+const ioServer = new SocketService(socketServer)
+ioServer.init()
 
-  socket.on('chat message', (message) => {
-    console.log('Received message:', message)
-
-    io.emit('chat message', message)
-  })
-
-  socket.on('disconnect', () => {
-    console.log('A user disconnected')
-  })
+socketServer.listen(Constants.WS_PORT, () => {
+  Logger.info(`Socket server listening on port ${Constants.WS_PORT}`)
 })
-
-const server = http.createServer(app)
-
-io.attach(server)
