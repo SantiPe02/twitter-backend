@@ -6,6 +6,8 @@ import cors from 'cors'
 import { Constants, NodeEnv, Logger } from '@utils'
 import { router } from '@router'
 import { ErrorHandling } from '@utils/errors'
+import { Server } from 'socket.io'
+import http from 'http'
 
 const app = express()
 
@@ -33,3 +35,23 @@ app.use(ErrorHandling)
 app.listen(Constants.PORT, () => {
   Logger.info(`Server listening on port ${Constants.PORT}`)
 })
+
+const io = new Server()
+
+io.on('connection', (socket) => {
+  console.log('A user connected')
+
+  socket.on('chat message', (message) => {
+    console.log('Received message:', message)
+
+    io.emit('chat message', message)
+  })
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected')
+  })
+})
+
+const server = http.createServer(app)
+
+io.attach(server)

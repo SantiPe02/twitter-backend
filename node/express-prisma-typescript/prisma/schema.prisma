@@ -35,6 +35,8 @@ model User {
   follows   Follow[]   @relation(name: "follows")
   followers Follow[]   @relation(name: "followers")
   Reaction  Reaction[]
+  chats ChatUser[]
+  sentMessages Message[]
 }
 
 model Follow {
@@ -81,6 +83,39 @@ model Reaction {
 
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Chat {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  name String
+
+  users ChatUser[]
+  messages Message[]
+}
+
+model ChatUser {
+  chatId String @db.Uuid
+  userId String @db.Uuid
+
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@id([chatId, userId])
+}
+
+model Message {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  senderId String @db.Uuid
+  chatId String @db.Uuid
+
+  content String
+
+  date DateTime @default(now())
+
+  sender User @relation(fields: [senderId], references: [id])
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
 }
 
 enum AccountType {

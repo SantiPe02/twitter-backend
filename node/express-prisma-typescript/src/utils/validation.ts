@@ -45,3 +45,39 @@ export const validateUuid = (uuid: string): void => {
     throw new ValidationException([{ property: 'uuid', constraints: { isDefined: 'uuid should be a valid uuid' } }])
   }
 }
+
+export const validateMessageBody = (req: Request, res: Response, next: NextFunction): void => {
+  const content: string | undefined = req.body.content
+
+  if (!content) {
+    throw new ValidationException([
+      { property: 'content', constraints: { isDefined: 'content should be defined' } }
+    ])
+  }
+
+  next()
+}
+
+export const validateChatCreationBody = (req: Request, res: Response, next: NextFunction): void => {
+  const name: string | undefined = req.body.name
+
+  if (!name) {
+    throw new ValidationException([
+      { property: 'name', constraints: { isDefined: 'name should be defined' } }
+    ])
+  }
+
+  next()
+}
+
+export const validateChatUserBody = (req: Request, res: Response, next: NextFunction): void => {
+  const userId: string | undefined = req.body.userId
+
+  if (!userId) {
+    throw new ValidationException([
+      { property: 'userId', constraints: { isDefined: 'userId should be defined' } }
+    ])
+  }
+
+  next()
+}
