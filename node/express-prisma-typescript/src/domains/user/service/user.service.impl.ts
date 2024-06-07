@@ -54,4 +54,8 @@ export class UserServiceImpl implements UserService {
   async getUsersFilteredByUsername (username: string, options: OffsetPagination): Promise<UserViewDTO[]> {
     return await this.repository.getUsersFilteredByUsername(username, options)
   }
+
+  async getAccountType (userId: any): Promise<AccountType> {
+    return await this.repository.getAccountType(userId)
+  }
 }

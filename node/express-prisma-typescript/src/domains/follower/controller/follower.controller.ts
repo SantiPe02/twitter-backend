@@ -16,9 +16,9 @@ followRouter.post('/follow/:userId', async (req, res) => {
   return res.status(HttpStatus.CREATED).json(follow)
 })
 
-followRouter.post('/unfollow/:userId', async (req, res) => {
+followRouter.delete('/unfollow/:userId', async (req, res) => {
   const { userId: followerId } = res.locals.context
   const { userId: followedId } = req.params
   await service.unfollow(followerId, followedId)
-  return res.status(HttpStatus.OK)
+  return res.status(HttpStatus.OK).send(`Unfollowed user ${followedId}`)
 })

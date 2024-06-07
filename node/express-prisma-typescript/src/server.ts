@@ -6,6 +6,8 @@ import cors from 'cors'
 import { Constants, NodeEnv, Logger } from '@utils'
 import { router } from '@router'
 import { ErrorHandling } from '@utils/errors'
+import { createServer } from 'http'
+import { SocketService } from '@domains/chat'
 
 const app = express()
 
@@ -32,4 +34,13 @@ app.use(ErrorHandling)
 
 app.listen(Constants.PORT, () => {
   Logger.info(`Server listening on port ${Constants.PORT}`)
+})
+
+const socketServer = createServer(app)
+
+const ioServer = new SocketService(socketServer)
+ioServer.init()
+
+socketServer.listen(Constants.WS_PORT, () => {
+  Logger.info(`Socket server listening on port ${Constants.WS_PORT}`)
 })

@@ -1,5 +1,6 @@
 import { OffsetPagination } from '@types'
 import { UserViewDTO } from '../dto'
+import { AccountType } from '@prisma/client'
 
 export interface UserService {
   deleteUser: (userId: any) => Promise<void>
@@ -10,4 +11,5 @@ export interface UserService {
   getFollows: (userId: any) => Promise<UserViewDTO[]>
   uploadProfilePicture: (userId: any) => Promise<string>
   getUsersFilteredByUsername: (username: string, options: OffsetPagination) => Promise<UserViewDTO[]>
+  getAccountType: (userId: any) => Promise<AccountType>
 }
