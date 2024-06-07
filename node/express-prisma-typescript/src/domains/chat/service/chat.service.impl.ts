@@ -79,6 +79,11 @@ export class ChatServiceImpl implements ChatService {
     await this.chatUserService.leaveChat(userId, chatId)
   }
 
+  async getChatsByUserId (userId: string): Promise<ExtendedChatDTO[]> {
+    validateUuid(userId)
+    return await this.chatRepository.getChatsByUserId(userId)
+  }
+
   // Function to validate that user belongs to chat
   private async validateRelation (userId: string, chatId: string): Promise<void> {
     const relation = await this.relationService.getRelation(userId, chatId)

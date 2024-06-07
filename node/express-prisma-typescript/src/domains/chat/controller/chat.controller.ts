@@ -93,12 +93,27 @@ export class SocketService {
     socketIO.on('connection', (socket) => {
       console.log('Socket connected')
       let chatId = ''
+      let userId = ''
       const token = socket.handshake.headers.authorization?.split(' ')[1]
-      const { userId } = jwt.verify(token as string, Constants.TOKEN_SECRET) as { userId: string }
+      jwt.verify(token as string, Constants.TOKEN_SECRET, (err, context) => {
+        if (err) {
+          socket.disconnect()
+          return
+        }
+        userId = context !== undefined ? (context as any).userId : ''
+      })
 
-      socket.on('join', (room) => {
-        void socket.join(room)
+      socket.on('join', async (room) => {
         chatId = room
+        const chat = await chatService.getChatById(chatId, userId).catch((err) => {
+          console.error(err)
+          socket.disconnect()
+        })
+        if (chat) {
+          const messages = chat.messages
+          messages.map((message) => socket.emit('message', { content: message.content, senderId: message.senderId }))
+        }
+        void socket.join(room)
         console.log('Joined room', chatId)
       })
 
@@ -109,12 +124,17 @@ export class SocketService {
 
       socket.on('message', async (message) => {
         try {
-          console.log(chatId, userId, message)
+          console.log(`Message from: ${userId}, To: ${chatId}, Saying: ${message as string}`)
           await chatService.sendMessageToChat(chatId, userId, message)
-          socket.to(chatId).emit('message', message)
+          socket.to(chatId).emit('message', { content: message, senderId: userId })
         } catch (err) {
           console.error(err)
         }
+      })
+
+      socket.on('chats', async () => {
+        const chats = await chatService.getChatsByUserId(userId)
+        socket.emit('chats', chats)
       })
 
       socket.on('disconnect', () => {

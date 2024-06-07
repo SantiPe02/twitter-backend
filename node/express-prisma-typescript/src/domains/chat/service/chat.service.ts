@@ -8,4 +8,5 @@ export interface ChatService {
   sendMessageToChat: (chatId: string, senderId: string, content: string) => Promise<MessageDTO>
   joinChat: (userId: string, chatId: string, currentUserId?: string) => Promise<void>
   leaveChat: (userId: string, chatId: string, currentUserId?: string) => Promise<void>
+  getChatsByUserId: (userId: string) => Promise<ExtendedChatDTO[]>
 }

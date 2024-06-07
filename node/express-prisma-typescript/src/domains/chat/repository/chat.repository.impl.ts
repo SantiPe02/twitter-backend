@@ -43,4 +43,25 @@ export class ChatRepositoryImpl implements ChatRepository {
     const users = chat.users.map(user => new UserViewDTO(user.user))
     return new ExtendedChatDTO({ id: chatId, name: chat.name, messages, users })
   }
+
+  async getChatsByUserId (userId: string): Promise<ExtendedChatDTO[]> {
+    const chats = await this.db.chat.findMany({
+      where: {
+        users: {
+          some: {
+            userId
+          }
+        }
+      },
+      include: {
+        messages: true,
+        users: {
+          include: {
+            user: true
+          }
+        }
+      }
+    })
+    return chats.map(chat => new ExtendedChatDTO({ id: chat.id, name: chat.name, messages: chat.messages.map(message => new MessageDTO(message)), users: chat.users.map(user => new UserViewDTO(user.user)) }))
+  }
 }
