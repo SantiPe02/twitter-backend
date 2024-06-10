@@ -4,6 +4,7 @@ import { PostServiceImpl } from '@domains/post/service'
 import { BodyValidation, db } from '@utils'
 import { Router } from 'express'
 import HttpStatus from 'http-status'
+import 'express-async-errors'
 
 export const commentRouter = Router()
 

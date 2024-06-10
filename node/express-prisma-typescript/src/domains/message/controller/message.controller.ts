@@ -2,6 +2,7 @@ import { chatRouter } from '@domains/chat'
 import { MessageServiceImpl } from '../service/message.service.impl'
 import { MessageRepositoryImpl } from '../repository/message.repository.impl'
 import { db } from '@utils'
+import 'express-async-errors'
 
 const messageService = new MessageServiceImpl(new MessageRepositoryImpl(db))
 

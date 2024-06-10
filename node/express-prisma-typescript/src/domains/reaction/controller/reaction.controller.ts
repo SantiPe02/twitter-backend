@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { ReactionRepositoryImpl } from '../repository'
 import { db, validateReactionBody } from '@utils'
 import { ReactionServiceImpl } from '../service'
+import 'express-async-errors'
 
 export const reactionRouter = Router()
 
