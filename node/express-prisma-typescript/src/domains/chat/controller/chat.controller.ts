@@ -6,6 +6,7 @@ import HttpStatus from 'http-status'
 import { Server } from 'http'
 import io from 'socket.io'
 import jwt from 'jsonwebtoken'
+import 'express-async-errors'
 
 export const chatRouter = Router()
 const chatService = new ChatServiceImpl(new ChatRepositoryImpl(db))
