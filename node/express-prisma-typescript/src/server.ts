@@ -8,6 +8,8 @@ import { router } from '@router'
 import { ErrorHandling } from '@utils/errors'
 import { createServer } from 'http'
 import { SocketService } from '@domains/chat'
+import swaggerUi from 'swagger-ui-express'
+import swaggerSetup from './swagger/index'
 
 const app = express()
 
@@ -29,11 +31,13 @@ app.use(
 )
 
 app.use('/api', router)
+app.use('/api/swagger-doc', swaggerUi.serve, swaggerUi.setup(swaggerSetup))
 
 app.use(ErrorHandling)
 
 app.listen(Constants.PORT, () => {
   Logger.info(`Server listening on port ${Constants.PORT}`)
+  Logger.info(`Swagger documentation running on http://localhost:${Constants.PORT}/api/swagger-doc`)
 })
 
 const socketServer = createServer(app)
