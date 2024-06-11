@@ -60,15 +60,15 @@ userRouter.delete('/', async (req: Request, res: Response) => {
 
   await service.deleteUser(userId)
 
-  return res.status(HttpStatus.OK)
+  return res.status(HttpStatus.OK).send(`Deleted user ${userId as string}`)
 })
 
-userRouter.put('/switch-account-type', async (req: Request, res: Response) => {
+userRouter.patch('/switch-account-type', async (req: Request, res: Response) => {
   const { userId } = res.locals.context
 
   await service.switchAccountType(userId)
 
-  return res.status(HttpStatus.OK)
+  return res.status(HttpStatus.OK).send(`Switched account type for user ${userId as string}`)
 })
 
 userRouter.post('/upload-profile-picture', async (req: Request, res: Response) => {

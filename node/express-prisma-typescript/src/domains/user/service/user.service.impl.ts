@@ -37,6 +37,8 @@ export class UserServiceImpl implements UserService {
   }
 
   async switchAccountType (userId: any): Promise<void> {
+    const user = await this.getUser(userId)
+    if (!user) throw new NotFoundException('user')
     const accountType = await this.repository.getAccountType(userId) === AccountType.PUBLIC ? AccountType.PRIVATE : AccountType.PUBLIC
     await this.repository.switchAccountType(userId, accountType)
   }
@@ -50,6 +52,8 @@ export class UserServiceImpl implements UserService {
   }
 
   async uploadProfilePicture (userId: any): Promise<string> {
+    const user = await this.getUser(userId)
+    if (!user) throw new NotFoundException('user')
     const url = await getPresignedUrl(`profile-picture-user-${userId as string}`)
     await this.repository.uploadProfilePicture(userId, url)
     return url

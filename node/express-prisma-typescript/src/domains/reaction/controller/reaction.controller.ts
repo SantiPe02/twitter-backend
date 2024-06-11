@@ -3,6 +3,7 @@ import { ReactionRepositoryImpl } from '../repository'
 import { db, validateReactionBody } from '@utils'
 import { ReactionServiceImpl } from '../service'
 import 'express-async-errors'
+import httpStatus from 'http-status'
 
 export const reactionRouter = Router()
 
@@ -14,7 +15,7 @@ reactionRouter.post('/:postId', validateReactionBody, async (req, res) => {
   const { postId } = req.params
   const { reactionType } = req.body
   await reactionService.create(userId, postId, reactionType)
-  res.sendStatus(200)
+  res.sendStatus(httpStatus.CREATED)
 })
 
 reactionRouter.delete('/:postId', validateReactionBody, async (req, res) => {
@@ -22,17 +23,17 @@ reactionRouter.delete('/:postId', validateReactionBody, async (req, res) => {
   const { postId } = req.params
   const { reactionType } = req.body
   await reactionService.delete(userId, postId, reactionType)
-  res.sendStatus(200)
+  res.sendStatus(httpStatus.OK)
 })
 
 reactionRouter.get('/likes/:userId', async (req, res) => {
   const { userId } = req.params
   const likes = await reactionService.getLikesByUserId(userId)
-  res.status(200).json(likes)
+  res.status(httpStatus.OK).json(likes)
 })
 
 reactionRouter.get('/retweets/:userId', async (req, res) => {
   const { userId } = req.params
   const retweets = await reactionService.getRetweetsByUserId(userId)
-  res.status(200).json(retweets)
+  res.status(httpStatus.OK).json(retweets)
 })
