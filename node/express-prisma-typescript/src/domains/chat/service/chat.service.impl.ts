@@ -1,4 +1,4 @@
-import { ForbiddenException, NotFoundException, db, validateUuid } from '@utils'
+import { ForbiddenException, NotFoundException, ValidationException, db, validateUuid } from '@utils'
 import { ChatDTO, ExtendedChatDTO } from '../dto'
 import { ChatRepository } from '../repository/chat.repository'
 import { ChatService } from './chat.service'
@@ -9,6 +9,7 @@ import { MessageRepositoryImpl } from '@domains/message/repository/message.repos
 import { MessageDTO } from '@domains/message/dto'
 import { UserServiceImpl } from '@domains/user/service'
 import { UserRepositoryImpl } from '@domains/user/repository'
+import { ChatUserDTO } from '@domains/chatuser/dto'
 
 export class ChatServiceImpl implements ChatService {
   constructor (private readonly chatRepository: ChatRepository) {}
@@ -61,6 +62,10 @@ export class ChatServiceImpl implements ChatService {
       await this.validateRelation(currentUserId, chatId)
       await this.validateUserFollows(userId, currentUserId)
     }
+
+    const relation = await this.getRelation(userId, chatId)
+    if (relation) throw new ValidationException([{ message: 'User is already in chat' }])
+
     if (currentUserId === userId) throw new ForbiddenException()
 
     await this.chatUserService.joinChat(userId, chatId)
@@ -86,8 +91,12 @@ export class ChatServiceImpl implements ChatService {
 
   // Function to validate that user belongs to chat
   private async validateRelation (userId: string, chatId: string): Promise<void> {
-    const relation = await this.relationService.getRelation(userId, chatId)
+    const relation = await this.getRelation(userId, chatId)
     if (!relation) throw new ForbiddenException()
+  }
+
+  private async getRelation (userId: string, chatId: string): Promise<ChatUserDTO | null> {
+    return await this.relationService.getRelation(userId, chatId)
   }
 
   // Function to validate that chat exists
@@ -100,7 +109,6 @@ export class ChatServiceImpl implements ChatService {
   private async validateUserFollows (userId: string, currentUserId: string): Promise<void> {
     const myFollowers = await this.userService.getFollowers(currentUserId)
     const userFollowers = await this.userService.getFollowers(userId)
-    console.log(myFollowers, userFollowers)
 
     if (
       !myFollowers.find((follower) => follower.id === userId) ||

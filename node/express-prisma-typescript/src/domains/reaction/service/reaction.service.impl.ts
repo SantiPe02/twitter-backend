@@ -19,6 +19,12 @@ export class ReactionServiceImpl implements ReactionService {
 
   async delete (userId: string, postId: string, reactionType: string): Promise<void> {
     await this.validateReaction(userId, postId, reactionType)
+
+    const reactionInput = new ReactionInputDTO({ userId, postId, reactionType: reactionType as ReactionType })
+
+    const reaction = await this.reactionRepository.getReaction(reactionInput)
+    if (!reaction) throw new NotFoundException('reaction')
+
     await this.reactionRepository.delete(
       new ReactionInputDTO({ userId, postId, reactionType: reactionType as ReactionType })
     )
