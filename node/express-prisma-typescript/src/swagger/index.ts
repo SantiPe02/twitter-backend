@@ -453,6 +453,24 @@ const swaggerDefinition: OAS3Definition = {
             bearerAuth: []
           }
         ],
+        parameters: [
+          {
+            name: 'limit',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'number'
+            }
+          },
+          {
+            name: 'skip',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'number'
+            }
+          }
+        ],
         responses: {
           200: {
             description: 'OK',
@@ -680,6 +698,22 @@ const swaggerDefinition: OAS3Definition = {
             required: true,
             schema: {
               type: 'string'
+            }
+          },
+          {
+            name: 'limit',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'number'
+            }
+          },
+          {
+            name: 'skip',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'number'
             }
           }
         ],
@@ -1095,6 +1129,30 @@ const swaggerDefinition: OAS3Definition = {
             schema: {
               type: 'string'
             }
+          },
+          {
+            name: 'limit',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'number'
+            }
+          },
+          {
+            name: 'before',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'string'
+            }
+          },
+          {
+            name: 'after',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'string'
+            }
           }
         ],
         responses: {
@@ -1393,6 +1451,32 @@ const swaggerDefinition: OAS3Definition = {
         security: [
           {
             bearerAuth: []
+          }
+        ],
+        parameters: [
+          {
+            name: 'limit',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'number'
+            }
+          },
+          {
+            name: 'before',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'string'
+            }
+          },
+          {
+            name: 'after',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'string'
+            }
           }
         ],
         responses: {
