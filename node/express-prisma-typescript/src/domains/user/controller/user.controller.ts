@@ -30,10 +30,27 @@ userRouter.get('/me', async (req: Request, res: Response) => {
   return res.status(HttpStatus.OK).json(user)
 })
 
+userRouter.get('/followers', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  const followers = await service.getFollowers(userId)
+
+  return res.status(HttpStatus.OK).json(followers)
+})
+
+userRouter.get('/follows', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  const follows = await service.getFollows(userId)
+
+  return res.status(HttpStatus.OK).json(follows)
+})
+
 userRouter.get('/:userId', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
   const { userId: otherUserId } = req.params
 
-  const user = await service.getUser(otherUserId)
+  const user = await service.getUser(otherUserId, userId)
 
   return res.status(HttpStatus.OK).json(user)
 })
@@ -43,5 +60,30 @@ userRouter.delete('/', async (req: Request, res: Response) => {
 
   await service.deleteUser(userId)
 
-  return res.status(HttpStatus.OK)
+  return res.status(HttpStatus.OK).send(`Deleted user ${userId as string}`)
+})
+
+userRouter.patch('/switch-account-type', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  await service.switchAccountType(userId)
+
+  return res.status(HttpStatus.OK).send(`Switched account type for user ${userId as string}`)
+})
+
+userRouter.post('/upload-profile-picture', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  const url = await service.uploadProfilePicture(userId)
+
+  return res.status(HttpStatus.OK).send(url)
+})
+
+userRouter.get('/by_username/:username', async (req: Request, res: Response) => {
+  const { username } = req.params
+  const { limit, skip } = req.query as Record<string, string>
+
+  const users = await service.getUsersFilteredByUsername(username, { limit: Number(limit), skip: Number(skip) })
+
+  return res.status(HttpStatus.OK).json(users)
 })

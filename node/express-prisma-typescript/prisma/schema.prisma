@@ -19,18 +19,24 @@ datasource db {
 model User {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid // Primary Key
 
-  username String  @unique // Unique constraint
-  name     String? @db.VarChar(35) // Limit display name to 35 characters
-  email    String  @unique // Unique constraint
-  password String
+  username    String       @unique // Unique constraint
+  name        String?      @db.VarChar(35) // Limit display name to 35 characters
+  email       String       @unique // Unique constraint
+  password    String
+  accountType AccountType? @default(PUBLIC) // creates user with public account by default
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? // Optional value
 
+  profilePicture String?
+
   posts     Post[]
-  follows   Follow[] @relation(name: "follows")
-  followers Follow[] @relation(name: "followers")
+  follows   Follow[]   @relation(name: "follows")
+  followers Follow[]   @relation(name: "followers")
+  Reaction  Reaction[]
+  chats ChatUser[]
+  sentMessages Message[]
 }
 
 model Follow {
@@ -57,6 +63,67 @@ model Post {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? // Optional value
+  
+  commentPostReference String? @db.Uuid
+
+  reactions Reaction[]
 
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade) // One to many
+}
+
+model Reaction {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid // Primary Key
+
+  postId       String       @db.Uuid
+  userId       String       @db.Uuid
+  reactionType ReactionType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Chat {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  name String
+
+  users ChatUser[]
+  messages Message[]
+}
+
+model ChatUser {
+  chatId String @db.Uuid
+  userId String @db.Uuid
+
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@id([chatId, userId])
+}
+
+model Message {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  senderId String @db.Uuid
+  chatId String @db.Uuid
+
+  content String
+
+  date DateTime @default(now())
+
+  sender User @relation(fields: [senderId], references: [id])
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}
+
+enum AccountType {
+  PUBLIC
+  PRIVATE
+}
+
+enum ReactionType {
+  LIKE
+  RETWEET
 }

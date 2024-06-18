@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator'
-import { ExtendedUserDTO } from '@domains/user/dto'
+import { IsArray, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator'
+import { UserViewDTO } from '@domains/user/dto'
 
 export class CreatePostInputDTO {
   @IsString()
@@ -8,7 +8,7 @@ export class CreatePostInputDTO {
     content!: string
 
   @IsOptional()
-  @MaxLength(4)
+  @IsArray()
     images?: string[]
 }
 
@@ -37,7 +37,7 @@ export class ExtendedPostDTO extends PostDTO {
     this.qtyRetweets = post.qtyRetweets
   }
 
-  author!: ExtendedUserDTO
+  author!: UserViewDTO
   qtyComments!: number
   qtyLikes!: number
   qtyRetweets!: number

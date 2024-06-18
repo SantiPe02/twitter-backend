@@ -28,4 +28,7 @@ export class Constants {
 
   // Authentication secret
   static TOKEN_SECRET: string = process.env.TOKEN_SECRET ?? 'secret'
+
+  // WebSockets port
+  static WS_PORT: string = process.env.WS_PORT ?? '3001'
 }
