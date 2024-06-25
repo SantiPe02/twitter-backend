@@ -9,7 +9,7 @@ const swaggerDefinition: OAS3Definition = {
 
   servers: [
     {
-      url: 'http://localhost:8080/api',
+      url: 'https://twitter-backend-production-8bdc.up.railway.app/api',
       description: 'Development server'
     }
   ],
