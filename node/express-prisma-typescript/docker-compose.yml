@@ -31,6 +31,7 @@ services:
       - .envrc
     ports:
       - '8080:8080'
+      - '3001:3001'
     volumes: # if there's any new files containing sources, add them as volumes
       - ./src:/app/src
       - ./prisma:/app/prisma
