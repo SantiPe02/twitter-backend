@@ -37,7 +37,7 @@ app.use(ErrorHandling)
 
 app.listen(Constants.PORT, () => {
   Logger.info(`Server listening on port ${Constants.PORT}`)
-  Logger.info(`Swagger documentation running on http://localhost:${Constants.PORT}/api/swagger-doc`)
+  Logger.info('Swagger documentation running on http://twitter-backend-production-39ba.up.railway.app/api/swagger-doc')
 })
 
 const socketServer = createServer(app)

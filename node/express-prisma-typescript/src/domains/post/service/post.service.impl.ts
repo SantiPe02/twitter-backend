@@ -38,13 +38,13 @@ export class PostServiceImpl implements PostService {
 
   async getPost (userId: string, postId: string): Promise<PostDTO> {
     validateUuid(postId)
+    const post = await this.repository.getById(postId)
+    if (!post) throw new NotFoundException('post')
     const authorAccountType = await this.repository.getAuthorAccountTypeByPostId(postId)
-    if (authorAccountType === 'PRIVATE') {
+    if (authorAccountType === 'PRIVATE' && post.authorId !== userId) {
       const authorFollowers = await this.repository.getAuthorFollowersByPostId(postId)
       if (!authorFollowers.includes(userId)) throw new NotFoundException()
     }
-    const post = await this.repository.getById(postId)
-    if (!post) throw new NotFoundException('post')
     return post
   }
 
@@ -52,7 +52,7 @@ export class PostServiceImpl implements PostService {
     const allPosts = await this.repository.getAllByDatePaginated(options)
     const postsWithAuthorData = await Promise.all(allPosts.map(async post => {
       const authorAccountType = await this.repository.getAuthorAccountTypeByPostId(post.id)
-      if (authorAccountType === 'PRIVATE') {
+      if (authorAccountType === 'PRIVATE' && post.authorId !== userId) {
         const authorFollowers = await this.repository.getAuthorFollowersByPostId(post.id)
         return authorFollowers.includes(userId) ? post : null
       }
@@ -68,6 +68,10 @@ export class PostServiceImpl implements PostService {
 
   async getPostsByAuthor (userId: any, authorId: string): Promise<ExtendedPostDTO[]> {
     validateUuid(authorId)
+    if (userId === authorId) {
+      const posts = await this.repository.getByAuthorId(authorId)
+      return await Promise.all(posts.map(async post => await this.getExtendedPost(post)))
+    }
     const authorAccountType = await this.repository.getAuthorAccountTypeByAuthorId(authorId)
     if (authorAccountType === 'PRIVATE') {
       const authorFollowers = await this.repository.getAuthorFollowersByAuthorId(authorId)
