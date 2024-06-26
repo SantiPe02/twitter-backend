@@ -2,7 +2,7 @@ import { CreatePostInputDTO, ExtendedPostDTO, PostDTO } from '../dto'
 import { PostRepository } from '../repository'
 import { PostService } from '.'
 import { validate } from 'class-validator'
-import { ForbiddenException, NotFoundException, ValidationException, db, getPresignedUrl, validateUuid } from '@utils'
+import { ForbiddenException, NotFoundException, ValidationException, db, getPresignedUrl, validateUuid, generateRandomUuid } from '@utils'
 import { CursorPagination } from '@types'
 import { ReactionService, ReactionServiceImpl } from '@domains/reaction/service'
 import { ReactionRepositoryImpl } from '@domains/reaction/repository'
@@ -15,18 +15,26 @@ export class PostServiceImpl implements PostService {
   async createPost (userId: string, data: CreatePostInputDTO): Promise<PostDTO> {
     await validate(data)
 
+    const imagesIds: string[] = []
     const presignedUrls: string[] = []
 
     if (data.images) {
       if (data.images.length > 4) throw new ValidationException([{ images: 'You can only upload up to 4 images' }])
       data.images.forEach(async image => {
-        const presignedUrl = await getPresignedUrl(`post-image-${image}-user-${userId}-date-${new Date().toISOString()}`)
+        const imageId = generateRandomUuid()
+        const presignedUrl = await getPresignedUrl(`post/${imageId}`)
+        imagesIds.push(imageId)
         presignedUrls.push(presignedUrl)
       })
-      data.images = presignedUrls
     }
 
-    return await this.repository.create(userId, data)
+    const dataWithImages = { ...data, images: imagesIds }
+
+    const post = await this.repository.create(userId, dataWithImages)
+
+    post.images = presignedUrls
+
+    return post
   }
 
   async deletePost (userId: string, postId: string): Promise<void> {
