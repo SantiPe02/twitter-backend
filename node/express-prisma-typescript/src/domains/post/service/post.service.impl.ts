@@ -2,11 +2,10 @@ import { CreatePostInputDTO, ExtendedPostDTO, PostDTO } from '../dto'
 import { PostRepository } from '../repository'
 import { PostService } from '.'
 import { validate } from 'class-validator'
-import { ForbiddenException, NotFoundException, ValidationException, db, getPresignedUrl, validateUuid } from '@utils'
+import { ForbiddenException, NotFoundException, ValidationException, db, getPresignedUrl, validateUuid, generateRandomUuid } from '@utils'
 import { CursorPagination } from '@types'
 import { ReactionService, ReactionServiceImpl } from '@domains/reaction/service'
 import { ReactionRepositoryImpl } from '@domains/reaction/repository'
-import { generateRandomUuid } from '@utils/functions'
 
 export class PostServiceImpl implements PostService {
   constructor (private readonly repository: PostRepository) {}
