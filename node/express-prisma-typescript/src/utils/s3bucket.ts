@@ -9,10 +9,10 @@ const s3Client = new S3Client({
   }
 })
 
-export const getPresignedUrl = async (fileName: string): Promise<string> => {
+export const getPresignedUrl = async (key: string): Promise<string> => {
   const params = {
     Bucket: process.env.BUCKET_NAME,
-    Key: fileName,
+    Key: key,
     ContentType: 'multipart/form-data'
   }
 

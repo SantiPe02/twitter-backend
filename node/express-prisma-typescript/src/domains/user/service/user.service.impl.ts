@@ -5,6 +5,7 @@ import { UserRepository } from '../repository'
 import { UserService } from './user.service'
 import { AccountType } from '@prisma/client'
 import { getPresignedUrl, validateUuid } from '@utils'
+import { generateRandomUuid } from '@utils/functions'
 
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
@@ -53,9 +54,10 @@ export class UserServiceImpl implements UserService {
 
   async uploadProfilePicture (userId: any): Promise<string> {
     const user = await this.getUser(userId)
+    const pictureId = generateRandomUuid()
     if (!user) throw new NotFoundException('user')
-    const url = await getPresignedUrl(`profile-picture-user-${userId as string}`)
-    await this.repository.uploadProfilePicture(userId, url)
+    const url = await getPresignedUrl(`profile/${userId as string}/${pictureId}`)
+    await this.repository.uploadProfilePicture(userId, pictureId)
     return url
   }
 
