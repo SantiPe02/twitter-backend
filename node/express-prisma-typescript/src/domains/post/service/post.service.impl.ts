@@ -44,7 +44,7 @@ export class PostServiceImpl implements PostService {
     await this.repository.delete(postId)
   }
 
-  async getPost (userId: string, postId: string): Promise<PostDTO> {
+  async getPost (userId: string, postId: string): Promise<ExtendedPostDTO> {
     validateUuid(postId)
     const post = await this.repository.getById(postId)
     if (!post) throw new NotFoundException('post')
@@ -53,7 +53,7 @@ export class PostServiceImpl implements PostService {
       const authorFollowers = await this.repository.getAuthorFollowersByPostId(postId)
       if (!authorFollowers.includes(userId)) throw new NotFoundException()
     }
-    return post
+    return await this.getExtendedPost(post)
   }
 
   async getLatestPosts (userId: string, options: CursorPagination): Promise<ExtendedPostDTO[]> {
@@ -118,14 +118,15 @@ export class PostServiceImpl implements PostService {
     return commentsWithReactionsData.sort((a, b) => a.qtyLikes + a.qtyRetweets - b.qtyLikes - b.qtyRetweets).reverse()
   }
 
-  private async getExtendedPost (post: PostDTO): Promise<ExtendedPostDTO> {
+  async getExtendedPost (post: PostDTO): Promise<ExtendedPostDTO> {
     const likes = await this.reactionService.getQtyOfLikes(post.id)
     const retweets = await this.reactionService.getQtyOfRetweets(post.id)
     const author = await this.repository.getAuthorByPostId(post.id)
-    const comments = await this.repository.getQtyOfComments(post.id)
+    const reactions = await this.reactionService.getReactionsByPostId(post.id)
+    const comments = await this.repository.getCommentsByPostId(post.id, { limit: 3 })
 
     if (!author) throw new NotFoundException('author')
 
-    return new ExtendedPostDTO({ ...post, author, qtyComments: comments, qtyLikes: likes, qtyRetweets: retweets })
+    return new ExtendedPostDTO({ ...post, author, qtyComments: comments.length, qtyLikes: likes, qtyRetweets: retweets, reactions, comments })
   }
 }
