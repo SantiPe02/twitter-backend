@@ -28,7 +28,7 @@ export class PostDTO {
   content: string
   images: string[]
   createdAt: Date
-  commentPostReference!: string | null
+  commentPostReference?: string
 }
 
 export class ExtendedPostDTO extends PostDTO {
