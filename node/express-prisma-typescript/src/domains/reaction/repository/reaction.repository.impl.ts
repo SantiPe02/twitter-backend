@@ -103,4 +103,12 @@ export class ReactionRepositoryImpl implements ReactionRepository {
       }
     })
   }
+
+  async getReactionsByPostId (postId: string): Promise<ReactionDTO[]> {
+    return await this.db.reaction.findMany({
+      where: {
+        postId
+      }
+    }).then(reactions => reactions.map(reaction => new ReactionDTO(reaction)))
+  }
 }
