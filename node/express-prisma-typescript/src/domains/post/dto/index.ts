@@ -47,5 +47,5 @@ export class ExtendedPostDTO extends PostDTO {
   qtyLikes!: number
   qtyRetweets!: number
   reactions: ReactionDTO[]
-  comments: PostDTO[]
+  comments: ExtendedPostDTO[]
 }

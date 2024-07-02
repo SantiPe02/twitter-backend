@@ -124,9 +124,10 @@ export class PostServiceImpl implements PostService {
     const author = await this.repository.getAuthorByPostId(post.id)
     const reactions = await this.reactionService.getReactionsByPostId(post.id)
     const comments = await this.repository.getCommentsByPostId(post.id, { limit: 3 })
+    const extendedComments = await Promise.all(comments.map(async comment => await this.getExtendedPost(comment)))
 
     if (!author) throw new NotFoundException('author')
 
-    return new ExtendedPostDTO({ ...post, author, qtyComments: comments.length, qtyLikes: likes, qtyRetweets: retweets, reactions, comments })
+    return new ExtendedPostDTO({ ...post, author, qtyComments: comments.length, qtyLikes: likes, qtyRetweets: retweets, reactions, comments: extendedComments })
   }
 }
