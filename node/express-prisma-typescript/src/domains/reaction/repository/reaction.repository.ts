@@ -10,4 +10,5 @@ export interface ReactionRepository {
   getRetweetsByUserId: (userId: string) => Promise<ReactionDTO[]>
   getQtyOfLikes: (postId: string) => Promise<number>
   getQtyOfRetweets: (postId: string) => Promise<number>
+  getReactionsByPostId: (postId: string) => Promise<ReactionDTO[]>
 }

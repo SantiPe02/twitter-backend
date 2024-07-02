@@ -1,7 +1,7 @@
 import { ReactionType } from '@prisma/client'
 import { ReactionRepository } from '../repository'
 import { ReactionService } from './reaction.service'
-import { ReactionInputDTO } from '../dto'
+import { ReactionDTO, ReactionInputDTO } from '../dto'
 import { ConflictException, NotFoundException, validateUuid } from '@utils'
 
 export class ReactionServiceImpl implements ReactionService {
@@ -63,5 +63,10 @@ export class ReactionServiceImpl implements ReactionService {
     validateUuid(postId)
     const qty = await this.reactionRepository.getQtyOfRetweets(postId)
     return qty
+  }
+
+  async getReactionsByPostId (postId: string): Promise<ReactionDTO[]> {
+    validateUuid(postId)
+    return await this.reactionRepository.getReactionsByPostId(postId)
   }
 }

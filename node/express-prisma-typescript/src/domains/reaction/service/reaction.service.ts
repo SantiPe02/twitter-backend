@@ -1,4 +1,4 @@
-import { ReactionInputDTO } from '../dto'
+import { ReactionDTO, ReactionInputDTO } from '../dto'
 
 export interface ReactionService {
   create: (userId: string, postId: string, reactionType: string) => Promise<void>
@@ -7,4 +7,5 @@ export interface ReactionService {
   getRetweetsByUserId: (userId: string) => Promise<ReactionInputDTO[]>
   getQtyOfLikes: (postId: string) => Promise<number>
   getQtyOfRetweets: (postId: string) => Promise<number>
+  getReactionsByPostId: (postId: string) => Promise<ReactionDTO[]>
 }

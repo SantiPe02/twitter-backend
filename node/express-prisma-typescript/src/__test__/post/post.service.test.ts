@@ -2,7 +2,7 @@ import { prismaMock } from '../../testconfig/singleton'
 import { PostServiceImpl } from '../../domains/post/service/post.service.impl'
 import { PostRepositoryImpl } from '../../domains/post/repository/post.repository.impl'
 import { AccountType, Post } from '@prisma/client'
-import { CreatePostInputDTO } from '@domains/post/dto'
+import { CreatePostInputDTO, ExtendedPostDTO } from '@domains/post/dto'
 import { ForbiddenException, NotFoundException, ValidationException } from '@utils'
 
 const postService = new PostServiceImpl(new PostRepositoryImpl(prismaMock))
@@ -19,6 +19,26 @@ const postMock: Post = {
   updatedAt: new Date(),
   deletedAt: null,
   commentPostReference: null
+}
+
+const extendedPostMock: ExtendedPostDTO = {
+  id: postuuid,
+  authorId: authoruuid,
+  content: 'test content',
+  images: [],
+  createdAt: new Date(),
+  commentPostReference: null,
+  qtyComments: 0,
+  qtyLikes: 0,
+  qtyRetweets: 0,
+  reactions: [],
+  comments: [],
+  author: {
+    id: authoruuid,
+    name: 'Test',
+    username: 'test',
+    profilePicture: null
+  }
 }
 
 beforeEach(() => {
@@ -90,6 +110,7 @@ describe('Post Service', () => {
       prismaMock.post.findFirst.mockResolvedValue(postMock)
       prismaMock.post.findMany.mockResolvedValue([postMock])
       jest.spyOn(PostRepositoryImpl.prototype, 'getAuthorAccountTypeByPostId').mockResolvedValue(AccountType.PUBLIC)
+      jest.spyOn(PostServiceImpl.prototype, 'getExtendedPost').mockResolvedValue(extendedPostMock)
 
       await expect(postService.getPost(authoruuid, postuuid)).resolves.toBeDefined()
     })
