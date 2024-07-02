@@ -27,7 +27,6 @@ const extendedPostMock: ExtendedPostDTO = {
   content: 'test content',
   images: [],
   createdAt: new Date(),
-  commentPostReference: null,
   qtyComments: 0,
   qtyLikes: 0,
   qtyRetweets: 0,

@@ -16,7 +16,11 @@ export class PostRepositoryImpl implements PostRepository {
         ...data
       }
     })
-    return new PostDTO(post)
+    const postDTO = {
+      ...post,
+      commentPostReference: post.commentPostReference ?? undefined
+    }
+    return new PostDTO(postDTO)
   }
 
   async getAllByDatePaginated (options: CursorPagination): Promise<PostDTO[]> {
@@ -36,7 +40,10 @@ export class PostRepositoryImpl implements PostRepository {
         }
       ]
     })
-    return posts.map(post => new PostDTO(post))
+    return posts.map(post => new PostDTO({
+      ...post,
+      commentPostReference: post.commentPostReference ?? undefined
+    }))
   }
 
   async delete (postId: string): Promise<void> {
@@ -53,7 +60,12 @@ export class PostRepositoryImpl implements PostRepository {
         id: postId
       }
     })
-    return (post != null) ? new PostDTO(post) : null
+    return (post != null)
+      ? new PostDTO({
+        ...post,
+        commentPostReference: post.commentPostReference ?? undefined
+      })
+      : null
   }
 
   async getByAuthorId (authorId: string): Promise<PostDTO[]> {
@@ -62,7 +74,10 @@ export class PostRepositoryImpl implements PostRepository {
         authorId
       }
     })
-    return posts.map(post => new PostDTO(post))
+    return posts.map(post => new PostDTO({
+      ...post,
+      commentPostReference: post.commentPostReference ?? undefined
+    }))
   }
 
   async getAuthorAccountTypeByPostId (postId: string): Promise<string> {
@@ -137,7 +152,10 @@ export class PostRepositoryImpl implements PostRepository {
         ...data
       }
     })
-    return new PostDTO(post)
+    return new PostDTO({
+      ...post,
+      commentPostReference: post.commentPostReference ?? undefined
+    })
   }
 
   async getCommentsByUserId (userId: string): Promise<PostDTO[]> {
@@ -149,7 +167,10 @@ export class PostRepositoryImpl implements PostRepository {
         }
       }
     })
-    return posts.map(post => new PostDTO(post))
+    return posts.map(post => new PostDTO({
+      ...post,
+      commentPostReference: post.commentPostReference ?? undefined
+    }))
   }
 
   async getCommentsByPostId (postId: string, options: CursorPagination): Promise<PostDTO[]> {
@@ -169,7 +190,10 @@ export class PostRepositoryImpl implements PostRepository {
         }
       ]
     })
-    return posts.map(post => new PostDTO(post))
+    return posts.map(post => new PostDTO({
+      ...post,
+      commentPostReference: post.commentPostReference ?? undefined
+    }))
   }
 
   async getAuthorByPostId (postId: string): Promise<UserViewDTO | null> {

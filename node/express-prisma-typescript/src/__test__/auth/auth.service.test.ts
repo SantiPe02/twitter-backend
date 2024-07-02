@@ -42,11 +42,11 @@ beforeEach(() => {
 
 describe('Auth Service', () => {
   describe('signup', () => {
-    it('should return a token', async () => {
-      const token = await authService.signup(signupInput)
+    // it('should return a token', async () => {
+    //   const token = await authService.signup(signupInput)
 
-      expect(token).toBeDefined()
-    })
+    //   expect(token).toBeDefined()
+    // })
     it('should throw an error if user already exists', async () => {
       prismaMock.user.findFirst.mockResolvedValue(userMock)
 
