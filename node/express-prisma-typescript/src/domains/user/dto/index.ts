@@ -1,3 +1,5 @@
+import { ExtendedPostDTO } from '@domains/post/dto'
+
 export class UserDTO {
   constructor (user: UserDTO) {
     this.id = user.id
@@ -34,4 +36,29 @@ export class UserViewDTO {
   name: string | null
   username: string
   profilePicture: string | null
+  createdAt?: Date
+}
+
+export class UserProfileDTO {
+  constructor (user: UserProfileDTO) {
+    this.id = user.id
+    this.name = user.name
+    this.username = user.username
+    this.profilePicture = user.profilePicture
+    this.private = user.private
+    this.createdAt = user.createdAt
+    this.followers = user.followers
+    this.following = user.following
+    this.posts = user.posts
+  }
+
+  id: string
+  name: string | null
+  username: string
+  profilePicture: string | null
+  private: boolean
+  createdAt?: Date
+  followers: UserViewDTO[]
+  following: UserViewDTO[]
+  posts: ExtendedPostDTO[]
 }
