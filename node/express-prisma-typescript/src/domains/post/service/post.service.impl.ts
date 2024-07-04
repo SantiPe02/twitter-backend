@@ -130,4 +130,15 @@ export class PostServiceImpl implements PostService {
 
     return new ExtendedPostDTO({ ...post, author, qtyComments: comments.length, qtyLikes: likes, qtyRetweets: retweets, reactions, comments: extendedComments })
   }
+
+  async getFollowingPosts (userId: string): Promise<ExtendedPostDTO[]> {
+    const myFollows = await this.repository.getFollowing(userId)
+    const posts = await Promise.all(myFollows.map(async follow => await this.repository.getByAuthorId(follow.id)))
+    const postsWithReactionsData = await Promise.all(
+      posts.flat().map(
+        async post => await this.getExtendedPost(post)
+      ))
+
+    return postsWithReactionsData
+  }
 }

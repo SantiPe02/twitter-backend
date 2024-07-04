@@ -58,3 +58,11 @@ postRouter.delete('/:postId', async (req: Request, res: Response) => {
 
   return res.status(HttpStatus.OK).send(`Deleted post ${postId}`)
 })
+
+postRouter.get('/following', async (req: Request, res: Response) => {
+  const { userId } = res.locals.context
+
+  const posts = await service.getFollowingPosts(userId)
+
+  return res.status(HttpStatus.OK).json(posts)
+})

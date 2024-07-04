@@ -222,4 +222,17 @@ export class PostRepositoryImpl implements PostRepository {
       }
     })
   }
+
+  async getFollowing (userId: string): Promise<UserViewDTO[]> {
+    const user = await this.db.user.findMany({
+      where: {
+        followers: {
+          some: {
+            followerId: userId
+          }
+        }
+      }
+    })
+    return user.map(u => new UserViewDTO(u))
+  }
 }
