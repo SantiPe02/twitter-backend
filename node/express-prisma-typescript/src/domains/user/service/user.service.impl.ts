@@ -18,14 +18,7 @@ export class UserServiceImpl implements UserService {
     validateUuid(userId)
     const user = await this.repository.getById(userId)
     if (!user) throw new NotFoundException('user')
-    if (userId === myId) return user
-    if (myId === undefined) return user
-
-    const accountType = await this.repository.getAccountType(userId)
-    if (accountType === AccountType.PUBLIC) return user
-    const followers = await this.repository.getFollowers(userId)
-    if (followers.some(follower => follower.id === myId)) return user
-    return null
+    return user
   }
 
   async getUserRecommendations (userId: any, options: OffsetPagination): Promise<UserViewDTO[]> {
