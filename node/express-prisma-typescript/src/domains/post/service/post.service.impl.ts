@@ -6,11 +6,14 @@ import { ForbiddenException, NotFoundException, ValidationException, db, getPres
 import { CursorPagination } from '@types'
 import { ReactionService, ReactionServiceImpl } from '@domains/reaction/service'
 import { ReactionRepositoryImpl } from '@domains/reaction/repository'
+import { UserRepositoryImpl } from '@domains/user/repository'
 
 export class PostServiceImpl implements PostService {
   constructor (private readonly repository: PostRepository) {}
 
   private readonly reactionService: ReactionService = new ReactionServiceImpl(new ReactionRepositoryImpl(db))
+
+  private readonly userRepo = new UserRepositoryImpl(db)
 
   async createPost (userId: string, data: CreatePostInputDTO): Promise<PostDTO> {
     await validate(data)
@@ -132,7 +135,7 @@ export class PostServiceImpl implements PostService {
   }
 
   async getFollowingPosts (userId: string): Promise<ExtendedPostDTO[]> {
-    const myFollows = await this.repository.getFollowing(userId)
+    const myFollows = await this.userRepo.getFollows(userId)
     const posts = await Promise.all(myFollows.map(async follow => await this.repository.getByAuthorId(follow.id)))
     const postsWithReactionsData = await Promise.all(
       posts.flat().map(
