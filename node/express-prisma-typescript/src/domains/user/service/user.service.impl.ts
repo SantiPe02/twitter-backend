@@ -1,14 +1,18 @@
 import { NotFoundException } from '@utils/errors'
 import { OffsetPagination } from 'types'
-import { UserViewDTO } from '../dto'
+import { UserProfileDTO, UserViewDTO } from '../dto'
 import { UserRepository } from '../repository'
 import { UserService } from './user.service'
 import { AccountType } from '@prisma/client'
-import { getPresignedUrl, validateUuid } from '@utils'
+import { db, getPresignedUrl, validateUuid } from '@utils'
 import { generateRandomUuid } from '@utils/functions'
+import { PostServiceImpl } from '@domains/post/service'
+import { PostRepositoryImpl } from '@domains/post/repository'
 
 export class UserServiceImpl implements UserService {
   constructor (private readonly repository: UserRepository) {}
+
+  private readonly postService = new PostServiceImpl(new PostRepositoryImpl(db))
 
   async getUser (userId: any, myId?: any): Promise<UserViewDTO | null> {
     validateUuid(userId)
@@ -67,5 +71,16 @@ export class UserServiceImpl implements UserService {
 
   async getAccountType (userId: any): Promise<AccountType> {
     return await this.repository.getAccountType(userId)
+  }
+
+  async getUserProfile (myId: string, userId: string): Promise<UserProfileDTO> {
+    const user = await this.repository.getById(userId)
+    if (!user) throw new NotFoundException('user')
+    const createdAt = user.createdAt
+    const followers = await this.repository.getFollowers(userId)
+    const following = await this.repository.getFollows(userId)
+    const posts = await this.postService.getPostsByAuthor(myId, userId)
+    const privateAccount = await this.repository.getAccountType(userId) === AccountType.PRIVATE
+    return new UserProfileDTO({ ...user, followers, following, posts, private: privateAccount, createdAt })
   }
 }

@@ -87,3 +87,12 @@ userRouter.get('/by_username/:username', async (req: Request, res: Response) => 
 
   return res.status(HttpStatus.OK).json(users)
 })
+
+userRouter.get('/profile/:userId', async (req: Request, res: Response) => {
+  const { userId } = req.params
+  const { userId: myId } = res.locals.context
+
+  const user = await service.getUserProfile(myId, userId)
+
+  return res.status(HttpStatus.OK).json(user)
+})
