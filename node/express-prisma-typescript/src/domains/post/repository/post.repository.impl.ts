@@ -71,7 +71,8 @@ export class PostRepositoryImpl implements PostRepository {
   async getByAuthorId (authorId: string): Promise<PostDTO[]> {
     const posts = await this.db.post.findMany({
       where: {
-        authorId
+        authorId,
+        commentPostReference: null
       }
     })
     return posts.map(post => new PostDTO({
