@@ -135,6 +135,8 @@ export class PostServiceImpl implements PostService {
   }
 
   async getFollowingPosts (userId: string): Promise<ExtendedPostDTO[]> {
+    console.log(userId)
+    validateUuid(userId)
     const myFollows = await this.userRepo.getFollows(userId)
     const posts = await Promise.all(myFollows.map(async follow => await this.repository.getByAuthorId(follow.id)))
     const postsWithReactionsData = await Promise.all(
