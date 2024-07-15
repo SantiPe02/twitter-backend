@@ -34,6 +34,8 @@ export class PostServiceImpl implements PostService {
 
     const dataWithImages = { ...data, images: imagesIds }
 
+    console.log(dataWithImages)
+
     const post = await this.repository.create(userId, dataWithImages)
 
     console.log(post)
