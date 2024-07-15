@@ -23,13 +23,14 @@ export class PostServiceImpl implements PostService {
 
     if (data.images) {
       if (data.images.length > 4) throw new ValidationException([{ images: 'You can only upload up to 4 images' }])
-      data.images.forEach(async image => {
+      const uploadPromises = data.images.map(async () => {
         const imageId = generateRandomUuid()
         console.log(imageId)
         const presignedUrl = await getPresignedUrl(`${imageId}`)
         imagesIds.push(imageId)
         presignedUrls.push(presignedUrl)
       })
+      await Promise.all(uploadPromises)
     }
 
     const dataWithImages = { ...data, images: imagesIds }
