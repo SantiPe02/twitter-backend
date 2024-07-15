@@ -53,7 +53,7 @@ export class UserServiceImpl implements UserService {
     const user = await this.getUser(userId)
     const pictureId = generateRandomUuid()
     if (!user) throw new NotFoundException('user')
-    const url = await getPresignedUrl(`profile/${userId as string}/${pictureId}`)
+    const url = await getPresignedUrl(`${pictureId}`)
     await this.repository.uploadProfilePicture(userId, pictureId)
     return url
   }
