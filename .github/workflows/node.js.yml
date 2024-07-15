@@ -33,3 +33,5 @@ jobs:
     - name: Run tests
       run: npm test
       working-directory: ./node/express-prisma-typescript
+      env:
+        AWS_REGION: ${{ secrets.BUCKET_REGION }}
